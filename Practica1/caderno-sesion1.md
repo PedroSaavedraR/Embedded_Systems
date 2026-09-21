@@ -39,7 +39,7 @@ Dúas cousas específicas de hoxe:
 
 ## Práctica 1: A consola serie
 
-**Piloto:** ______________  **Navegante:** ______________
+**Piloto:** Pedro Saavedra Rubinos **Navegante:** José Martínez Estévez
 
 Obxectivo: comunicarse coa placa a través do monitor serie.
 Isto é moi habitual como ferramenta de depuración.
@@ -78,25 +78,25 @@ Se non o tedes claro, preguntade!
 
 - [ ] Os catro comandos funcionan desde o monitor serie.
 
-Heap libre que devolve `mem`: ______________ bytes
+Heap libre que devolve `mem`: 331772 B bytes
 
 **Discutide:** o chip ten 520 KB de SRAM. Por que o voso sketch ve bastante
 menos? A onde foi o resto?
 
-**R:** _______________________________________________________________________
+**R:** 64kb reservados como memoria do sistema; SO, Pila de comunicacións e Segmentos de datos estáticos. ESP.getFreeHeap() só reporta a memoria dinámica dispoñible e non fragmentada.
 
 **Experimento 1.1. O final de liña.** No desplegable do monitor serie, cambiade
 de **"Nova liña"** a **"Sen axuste de liña"** e escribide `on`.
 Probade tamén a escribilo varias veces seguidas.
 
-Que pasa? **R:** _________________________________________________________
+Que pasa? **R:** El comando tarda aproximadamente 1s en ejecutarse
 
-Por que? **R:** ___________________________________________________________
+Por que? **R:** Serial.readStringUntil('\n'), lee hasta un salto de liña. Nova liña engade /n ó do string, mentres que Sen axuste de liña, non, polo que execútase cando expira o timeout por defecto (1s).
 
 **Experimento 1.2. Os baudios.** Cambiade o monitor a **9600** (sen tocar o
 código) e mirade a saída.
 
-Que vedes? **R:** ________________________________________________________
+Que vedes? **R:** Nada, xa que a lectura non está sincronizada có envío de datos
 
 **Experimento 1.3. O bloqueo.** Engadide ao final do `loop()`:
 
@@ -111,11 +111,10 @@ Que vedes? **R:** ________________________________________________________
 liña, e o `delay(2000)` para todo outros dous. Cantos comandos vos comeu? Que
 problema tería isto nun aparello que ademais ten que atender a rede?
 
-**R:** _______________________________________________________________________
+**R:** Ao o delay, o loop que lee do serial execútase cada 2s, o que causa un cuello de botella no buffer ao executarse unha instrucción de cada vez.
+Non se "comen" instruccións a no ser que ocurra un buffer overflow.
+Se o aparato tives que atender a terefas de rede o bottleneck sería moito peor, facendoo inutilizable.
 
-_______________________________________________________________________________
-
-_______________________________________________________________________________
 
 > **Quitade o `delay(2000)`** antes de seguir.
 
@@ -123,7 +122,7 @@ _______________________________________________________________________________
 
 ## Práctica 2: WiFi
 
-**Piloto:** ______________  **Navegante:** ______________
+**Piloto:** José Martínez Estévez  **Navegante:** Pedro Saavedra Rubinos
 
 Obxectivo: meter a placa na rede. Non usaremos a WiFi da facultade.
 Montade un punto de acceso co móbil, e así vedes todas as pezas.
@@ -140,9 +139,9 @@ Configuración do móbil (*Zona WiFi* / *Compartir internet* / *Hotspot*):
 
 |                 | Valor |
 |---|---|
-| SSID            |       |
-| Contrasinal     |       |
-| Modelo de móbil |       |
+| SSID            |Se-josepedro       |
+| Contrasinal     |pedrosav       |
+| Modelo de móbil |Samsung A55 5G       |
 
 ### 2.2 Que ve a placa
 
@@ -167,9 +166,9 @@ void setup() {
 void loop() {}
 ```
 
-- [ ] O voso AP aparece na lista.
+- [Sí] O voso AP aparece na lista.
 
-Canle: ______   RSSI: ______ dBm   Redes totais atopadas: ______
+Canle: 6   RSSI: -11 dBm   Redes totais atopadas: 32
 
 > **Se o voso AP non aparece**, está en 5 GHz. Volvede ao paso 2.1. Se aparece e
 > desaparece, o móbil apaga a zona WiFi cando non hai clientes: volvede a
@@ -178,7 +177,7 @@ Canle: ______   RSSI: ______ dBm   Redes totais atopadas: ______
 **Discutide:** cantas das redes da lista están na mesma canle? Que lle pasa ao
 caudal cando varias redes comparten canle?
 
-**R:** _______________________________________________________________________
+**R:** O canle é unha subdivisión destinada a transmitir datos sen interferir con outras transmisións próximas, polo que se produce unha saturación e a rede vólvese moito máis lenta e inestable.
 
 ### 2.3 Conectar (e ver como se cae)
 
@@ -223,52 +222,49 @@ void loop() {
 }
 ```
 
-- [ ] A placa conecta e imprime a IP.
+- [Sí] A placa conecta e imprime a IP.
 
 | Dato | Valor |
 |---|---|
-| IP da placa | ___ . ___ . ___ . ___ |
-| Gateway (o voso móbil) | ___ . ___ . ___ . ___ |
-| Tempo desde o arranque ata a IP | ______ ms |
-| RSSI ao lado do móbil | ______ dBm |
+| IP da placa |  10.85.62.171 |
+| Gateway (o voso móbil) |10.85.62.36 |
+| Tempo desde o arranque ata a IP | 2434 ms |
+| RSSI ao lado do móbil | -45 dBm |
 
 **Experimento 2.4. A cobertura.** O navegante colle o móbil e afástase. O
 piloto le o RSSI na consola.
 
 | Distancia                   | RSSI (dBm) | Segue conectada? |
 |---|---|---|
-| Ao lado (< 1 m)             |            |                  |
-| 5 m, mesma sala             |            |                  |
-| Fóra da sala, porta pechada |            |                  |
+| Ao lado (< 1 m)             |     -20       |        Sí          |
+| 5 m, mesma sala             |      -65      |        Sí          |
+| Fóra da sala, porta pechada |       -70     |        Sí           |
 
-A que distancia se cortou? ______________
+A que distancia se cortou? A metade do pasillo, circa 20m
 
 **Experimento 2.5. A caída.** Apagade a zona WiFi do móbil, contade 30
 segundos, e volvédea acender. **Non toquedes a placa.**
 
 |                            | Tempo (ms) |
 |---|---|
-| Instante do `DESCONECTADO` |            |
-| Instante da nova IP        |            |
-| **Tardou en recuperarse**  |            |
+| Instante do `DESCONECTADO` |  5995    |
+| Instante da nova IP        |    10614         |
+| **Tardou en recuperarse**  |     +-5000       |
 
-Recuperou a **mesma** IP? ______
+Recuperou a **mesma** IP? Sí
 
-**Discutide:** ninguén programou esa reconexión no `loop()`. Quen a fixo? E que
+**Discutide:**- ninguén programou esa reconexión no `loop()`. Quen a fixo? E que
 pasaría se o código fose o típico `while (WiFi.status() != WL_CONNECTED) {}` do
 `setup()`?
 
-**R:** _______________________________________________________________________
+**R:** Este protocolo de reconexión pertence a librería de wifi da ESP(flag WiFi.setAutoReconnect(true)). Se fose un bucle while, unha desconexión obligaría o reinicio do programa.
 
-_______________________________________________________________________________
-
-_______________________________________________________________________________
 
 ---
 
 ## Práctica 3. O ESP32 como servidor web
 
-**Piloto:** ______________  **Navegante:** ______________
+**Piloto:** Pedro Saavedra Rubinos **Navegante:** José Martínez Estévez
 
 Obxectivo: que o móbil controle a placa desde o navegador. Partimos do sketch da
 práctica 2 e **engadímoslle** cousas.
