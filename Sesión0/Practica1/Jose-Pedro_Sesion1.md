@@ -257,7 +257,7 @@ Recuperou a **mesma** IP? Sí
 pasaría se o código fose o típico `while (WiFi.status() != WL_CONNECTED) {}` do
 `setup()`?
 
-**R:** Este protocolo de reconexión pertence a librería de wifi da ESP(flag WiFi.setAutoReconnect(true)). Se fose un bucle while, unha desconexión obligaría o reinicio do programa.
+**R:** Este protocolo de reconexión pertence á librería de wifi da ESP(flag WiFi.setAutoReconnect(true)). Se fose un bucle while, unha desconexión obligaría ó reinicio do programa.
 
 
 ---
@@ -303,33 +303,29 @@ String paxina() {
 
 **3.** Ao principio do `loop()`: `server.handleClient();`
 
-- [ ] Desde o **navegador do móbil**, abride `http://` + a IP da práctica 2.
-- [ ] O LED acende e apaga desde a páxina.
-- [ ] Recargade a páxina: o *uptime* sobe.
+- [Sí] Desde o **navegador do móbil**, abride `http://` + a IP da práctica 2.
+- [Sí ] O LED acende e apaga desde a páxina.
+- [Sí ] Recargade a páxina: o *uptime* sobe.
 
-Funcionou á primeira? Se non, que fallaba? **R:** __________________________
-
-_______________________________________________________________________________
+Funcionou á primeira? Se non, que fallaba? **R:** Sí
 
 **Experimento 3.1: o portátil tamén.** Conectade o **portátil** á mesma zona
 WiFi do móbil e abride a mesma IP.
 
-- [ ] Funciona desde o portátil.
+- [Sí] Funciona desde o portátil.
 - [ ] Non funciona -> probade a apagar "illamento de clientes" na zona WiFi, ou
       seguide co móbil (o punto de acceso **si** fala cos seus clientes).
 
 **Experimento 3.2: dous á vez.** Abride a páxina no móbil e no portátil e
 premede ACENDER nun e APAGAR no outro, rápido.
 
-Que vedes? **R:** ________________________________________________________
+Que vedes? **R:** Funciona a la perfección, sin latencia observable
 
 **Discutide:** o `loop()` chama a `server.handleClient()` unha vez por volta.
 Que pasaría se o `loop()` tardase 2 segundos en dar a volta (como na práctica
 1.3)? E que relación ten isto co `delay()` que quitastes?
 
-**R:** _______________________________________________________________________
-
-_______________________________________________________________________________
+**R:** Se o probamos co delay(2000), dende que prememos apagar ou encender hay un retardo de 2s, xerando latencia
 
 > **Para ir máis alá** (no anexo de referencia, `anexo-comunicacions.pdf`): como
 > viaxa realmente unha orde ata a placa, como probala con `curl` sen navegador,
@@ -340,7 +336,7 @@ _______________________________________________________________________________
 
 ## Práctica 4. OTA: actualizar sen cable
 
-**Piloto:** ______________  **Navegante:** ______________
+**Piloto:** Pedro Saavedra Rubinos  **Navegante:** José Martínez Estévez
 
 Obxectivo: cambiar o programa da placa **sen tocar o cable USB**. É a práctica
 que máis satisfacción dá e a que máis cousas require que estean ben.
@@ -374,29 +370,30 @@ void setupOTA() {
 **3.** Gravade **por cable** esta versión. É a última vez que usades o cable
 para gravar.
 
-- [ ] *Tools* -> *Port* -> aparece un **porto de rede** co voso `hostname`.
+- [Sí] *Tools* -> *Port* -> aparece un **porto de rede** co voso `hostname`.
 
-Como aparece exactamente? **R:** ____________________________________________
+Como aparece exactamente? **R:** esp32-parella-07 at 10.171.81.171
 
 **4.** Cambiade algo visible (por exemplo, o texto `parella ___` da páxina web,
 ou facede que o LED parpadee) e dádelle a *Upload* **co porto de rede
 seleccionado**. Pediravos o contrasinal.
 
-- [ ] Actualizouse sen cable.
+- [Sí] Actualizouse sen cable.
 
-Canto tardou a subida? ______ s   Que pasou co servidor web mentres tanto? ______
+Canto tardou a subida? circa 10 s   Que pasou co servidor web mentres tanto? server.handleClient() no se ejecuta: Al no llegar a esa línea en el loop(), el servidor HTTP deja de atender peticiones entrantes.
 
 **Experimento 4.1: o contrasinal.** Cambiade `setPassword` no IDE... ou mellor:
 intentade subir escribindo un contrasinal **mal**.
 
-Que erro dá? **R:** _______________________________________________________
+Que erro dá? **R:** 
+20:00:09 [ERROR]: Authentication Failed: Authentication Failed
+20:00:09 [ERROR]: Please check your password and try again
+Failed uploading: uploading error: exit status 1
 
 **Experimento 4.2: a partición.** *Tools* -> *Partition Scheme* ->
 **Huge APP (3MB No OTA/1MB SPIFFS)**, e intentade subir por rede.
 
-Que pasa, e por que? **R:** ________________________________________________
-
-_______________________________________________________________________________
+Que pasa, e por que? **R:** Al no tener OTA, nos da error al no haber 2 particiones.
 
 > Volvede a `Default 4MB with spiffs` (e gravade por cable) antes de seguir.
 
@@ -404,9 +401,9 @@ _______________________________________________________________________________
 Onde se está escribindo o novo? E se apagásemos a placa xusto no 70 % da
 descarga, que arrancaría ao volver a acendela?
 
-**R:** _______________________________________________________________________
-
-_______________________________________________________________________________
+**R:** Na partición app1 ou 0, a que estea libre ao ter duas particións. 
+Arrancaría a partición anterior.
+O ESP32 dispón dunha táboa chamada otadata. O bootloader non cambia o punteiro de arranque cara á nova partición ata que a descarga remata completamente
 
 ---
 
