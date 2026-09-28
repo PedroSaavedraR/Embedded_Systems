@@ -49,7 +49,7 @@ outra vez porque son as que estragan hardware:
 
 ## Práctica 1: Un sensor dixital
 
-**Piloto:** ______________  **Navegante:** ______________
+**Piloto:** Pedro Saavedra Rubinos  **Navegante:** José Martínez Estévez
 
 Obxectivo: traballar co sensor máis simple posible, con saída binaria.
 Usade o módulo de **vibración** (ou o de **inclinación**, se preferides).
@@ -90,9 +90,9 @@ void loop()
 
 Deixade o módulo quieto e mirade o valor. Despois axitádeo.
 
-En repouso vale: ______    Ao detectar vale: ______
+En repouso vale: 0    Ao detectar vale: 1
 
-Está invertido (é `LOW` cando detecta)? ______
+Está invertido (é `LOW` cando detecta)? No
 
 Moitos módulos deste tipo sacan `HIGH` cando detectan, e outros ao revés.
 Non se debe dar por suposto que funciona dun xeito determinado sen comprobalo.
@@ -101,7 +101,7 @@ Non se debe dar por suposto que funciona dun xeito determinado sen comprobalo.
 
 Xirade o tornillo azul pouco a pouco mentres mirades a consola.
 
-Que fai? **R:** ___________________________________________________________
+Que fai? **R:** Aumenta la sensibilidad, se activa más veces
 
 **Experimento 1.3. O rebote.**
 
@@ -140,19 +140,19 @@ o intervalo mínimo (poñédeo a 0 ms) e repetide con outros cinco golpes:
 
 | Intervalo mínimo | Golpes reais | Eventos contados |
 |---|---|---|
-| 50 ms | 5 | |
-| 0 ms  | 5 | |
+| 50 ms | 5 | 5 |
+| 0 ms  | 5 | 25 |
 
 **Discutide:** de onde saen os eventos de máis?
 
-**R:** _______________________________________________________________________
+**R:** Del muelle del propio hardware rebotando tras un golpe
 
 
 ---
 
 ## Práctica 2: Un sensor analóxico
 
-**Piloto:** ______________  **Navegante:** ______________
+**Piloto:** José Martínez Estévez  **Navegante:** Pedro Saavedra Rubinos
 
 Obxectivo: pasar do *si/non* a un **número**. Usade o módulo de **fotorresistencia (LDR)**,
 que ten tanto `DO` como `AO`. Centrarémonos en `AO`.
@@ -190,19 +190,17 @@ void loop()
 
 | Condición                | Valor cru (0-4095) | mV |
 |---|---|---|
-| Tapado co dedo           |                    |    |
-| Luz da aula              |                    |    |
-| Lanterna do móbil pegada |                    |    |
+| Tapado co dedo           |     120               |  240  |
+| Luz da aula              |      930              |  910  |
+| Lanterna do móbil pegada |       3200             | 2700   |
 
-Sube ou baixa o valor coa luz? ______________
+Sube ou baixa o valor coa luz? sube
 
 **Experimento 2.1. O Serial Plotter.** *Tools* -> *Serial Plotter*
 (pechade antes o Monitor. Non poden estar os dous abertos).
 Movede a man por riba do sensor.
 
-Que vedes que non se vía na consola de texto? **R:** _______________________
-
-_______________________________________________________________________________
+Que vedes que non se vía na consola de texto? **R:** un gráfico con los valores
 
 **Experimento 2.2.** Cambiade o cable do `AO` de **GPIO34 a GPIO25**, axustade o código,
 e comprobade que segue funcionando.
@@ -217,17 +215,13 @@ Agora engadide isto ao principio do `setup()`:
 
 | Pin usado | Lecturas antes do WiFi | Lecturas co WiFi |
 |---|---|---|
-| GPIO25    | | |
-| GPIO34    | | |
+| GPIO25    | normal | 0, 0|
+| GPIO34    | normal | normal |
 
 **Discutide:** que pasou, e por que só nun dos dous pins?
 Que consecuencia ten isto para o proxecto final?
 
-**R:** _______________________________________________________________________
-
-_______________________________________________________________________________
-
-_______________________________________________________________________________
+**R:** GPIO 25 interfiere a nivel de hardware con el Wi-Fi porque comparten el bloque ADC2, mientras que GPIO 34 es seguro de usar con Wi-Fi siempre que el circuito esté bien alimentado y protegido frente a ruido.
 
 
 Volvede a **GPIO34** antes de seguir.
